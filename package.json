@@ -32,7 +32,7 @@
     "lint-staged"
   ],
   "peerDependencies": {
-    "webpack": "3 | 4"
+    "webpack": "3 || 4"
   },
   "devDependencies": {
     "@types/jest": "23.3.1",
