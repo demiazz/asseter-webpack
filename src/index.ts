@@ -41,10 +41,8 @@ const getManifest = (compilation: Compilation): string => {
 
 // Plugin
 
-export class ManifestPlugin extends Plugin {
-  constructor(private output: string) {
-    super();
-  }
+export class ManifestPlugin implements Plugin {
+  constructor(private output: string) {}
 
   public apply(compiler: Compiler) {
     compiler.plugin("emit", (compilation: Compilation, done) => {
