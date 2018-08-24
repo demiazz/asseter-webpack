@@ -1,0 +1,49 @@
+{
+  "name": "@asseter/webpack",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "description": "Integration tools for Webpack and Asseter",
+  "license": "MIT",
+  "homepage": "https://github.com/demiazz/asseter-webpack",
+  "bugs": {
+    "url": "https://github.com/demiazz/asseter-webpack/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/demiazz/asseter-webpack"
+  },
+  "author": {
+    "name": "Alexey Plutalov",
+    "email": "demiazz.py@gmail.com"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint-staged": "lint-staged",
+    "test": "jest"
+  },
+  "lint-staged": {
+    "lib/**/*.ts": [
+      "prettier --write",
+      "tslint",
+      "git add"
+    ]
+  },
+  "pre-commit": [
+    "lint-staged"
+  ],
+  "peerDependencies": {
+    "webpack": "3 | 4"
+  },
+  "devDependencies": {
+    "@types/jest": "23.3.1",
+    "@types/webpack": "4.4.11",
+    "jest": "23.5.0",
+    "lint-staged": "7.2.2",
+    "pre-commit": "1.2.2",
+    "prettier": "1.14.2",
+    "ts-jest": "23.1.4",
+    "tslint": "5.11.0",
+    "tslint-config-prettier": "1.15.0",
+    "typescript": "3.0.1"
+  }
+}
