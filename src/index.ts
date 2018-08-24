@@ -1,4 +1,5 @@
 import { compilation as compilationNS, Compiler, Plugin } from "webpack";
+import { RawSource } from "webpack-sources";
 
 // Types
 
@@ -46,19 +47,9 @@ export class ManifestPlugin implements Plugin {
 
   public apply(compiler: Compiler) {
     compiler.plugin("emit", (compilation: Compilation, done) => {
-      let result: string;
+      const manifest = getManifest(compilation);
 
-      compilation.assets[this.output] = {
-        size() {
-          return result ? result.length : 0;
-        },
-
-        source() {
-          result = getManifest(compilation);
-
-          return result;
-        }
-      };
+      compilation.assets[this.output] = new RawSource(manifest);
 
       done();
     });
