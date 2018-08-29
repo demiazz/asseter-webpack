@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "lint": "tslint --project .",
     "lint-staged": "lint-staged",
     "test": "jest"
   },
