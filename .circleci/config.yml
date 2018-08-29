@@ -1,0 +1,110 @@
+version: 2
+
+defaults: &defaults
+  docker:
+    - image: circleci/node:10-stretch
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - checkout
+      - install_dependencies:
+          requires:
+            - checkout
+      - audit:
+          requires:
+            - install_dependencies
+      - lint:
+          requires:
+            - install_dependencies
+      - build:
+          requires:
+            - install_dependencies
+      - test:
+          requires:
+            - install_dependencies
+
+jobs:
+  checkout:
+    <<: *defaults
+    steps:
+      - restore_cache:
+          keys:
+            - asseter-webpack-{{ .Branch }}-{{ .Revision }}
+            - asseter-webpack-{{ .Branch }}
+            - asseter-webpack
+      - checkout
+      - save_cache:
+          key: asseter-webpack-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - .git
+      - persist_to_workspace:
+          root: .
+          paths: .
+
+  install_dependencies:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          keys:
+            - asseter-webpack-dependencies-{{ checksum "package-lock.json" }}
+            - asseter-webpack-dependencies
+      - run:
+          name: Updating NPM
+          command: sudo npm install -g npm@latest && sudo chmod 777 /usr/local/bin/npm
+      - run:
+          name: Install dependencies
+          command: npm install
+      - save_cache:
+          key: asseter-webpack-dependencies-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+
+  audit:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Audit
+          command: npm audit
+
+  lint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Linting
+          command: npm run lint -- --format junit --out lint-results.xml
+      - store_test_results:
+          path: lint-results.xml
+
+  build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Build
+          command: npm run build
+
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Tests
+          command: npm test -- --ci --reporters=default --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT: test-results.xml
+      - store_test_results:
+          path: test-results.xml
